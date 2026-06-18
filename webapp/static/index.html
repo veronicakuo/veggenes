@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>veggenes</title>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <span class="brand">veggenes</span>
+    <span class="brand-sub">cancer-genomics explorer</span>
+  </header>
+
+  <main class="container">
+    <!-- Step 1: study + cancer type -->
+    <section class="panel">
+      <div class="panel-head">
+        <span class="step">1</span>
+        <h2>Choose a study &amp; cancer type</h2>
+      </div>
+      <div class="controls">
+        <div class="field study-field">
+          <label>Study</label>
+          <input id="studySearch" type="text" autocomplete="off"
+                 placeholder="Search studies — e.g. lung, melanoma, msk…" />
+          <ul id="studyResults" class="dropdown" hidden></ul>
+        </div>
+        <div class="field">
+          <label>Cancer type</label>
+          <select id="cancerType" disabled><option>—</option></select>
+        </div>
+      </div>
+      <div id="cohortInfo" class="cohort-info"></div>
+    </section>
+
+    <!-- Tabs -->
+    <nav class="tabs">
+      <button class="tab active" data-tab="freq">Mutation frequency</button>
+      <button class="tab" data-tab="cooc">Gene co-occurrence</button>
+    </nav>
+
+    <!-- Tab 1: frequency -->
+    <section id="tab-freq" class="tabpane active">
+      <div class="panel">
+        <div class="panel-head row">
+          <div>
+            <span class="step">2</span>
+            <h2>Length-normalized mutation frequency</h2>
+          </div>
+          <div class="inline-controls">
+            <label class="switch-label">Normalize by gene length
+              <input type="checkbox" id="normToggle" checked />
+            </label>
+            <label>Top
+              <select id="topN">
+                <option>10</option><option selected>20</option><option>30</option><option>50</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <p class="hint">Click a bar to add that gene to your co-occurrence basket.</p>
+        <div id="freqPlot" class="plot"></div>
+        <div id="freqEmpty" class="empty">Select a study above to load mutation frequencies.</div>
+      </div>
+    </section>
+
+    <!-- Tab 2: co-occurrence -->
+    <section id="tab-cooc" class="tabpane">
+      <div class="panel">
+        <div class="panel-head row">
+          <div>
+            <span class="step">3</span>
+            <h2>Co-occurrence &amp; mutual exclusivity</h2>
+          </div>
+          <div class="inline-controls">
+            <div class="toggle-group" id="metricToggle">
+              <button class="seg active" data-metric="log2or">Log₂ odds ratio</button>
+              <button class="seg" data-metric="count">Co-occurrence count</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field gene-field">
+          <label>Genes</label>
+          <div id="geneBasket" class="chips"></div>
+          <input id="geneSearch" type="text" autocomplete="off"
+                 placeholder="Type a gene symbol and press Enter — e.g. KRAS, TP53, EGFR…" />
+          <ul id="geneResults" class="dropdown" hidden></ul>
+        </div>
+
+        <div class="inline-controls sub">
+          <label>Level
+            <select id="levelSel">
+              <option value="sample" selected>Sample</option>
+              <option value="patient">Patient</option>
+            </select>
+          </label>
+          <label>Alterations
+            <select id="altSel">
+              <option value="altered" selected>Mutation + CNA + fusion</option>
+              <option value="mutation">Mutation only</option>
+            </select>
+          </label>
+          <button id="runCooc" class="primary">Compute matrix</button>
+        </div>
+
+        <div id="coocPlot" class="plot"></div>
+        <div id="coocEmpty" class="empty">Add at least two genes, then compute the matrix.</div>
+      </div>
+    </section>
+  </main>
+
+  <div id="spinner" class="spinner" hidden><div class="dot"></div> Loading…</div>
+  <script src="app.js"></script>
+</body>
+</html>
